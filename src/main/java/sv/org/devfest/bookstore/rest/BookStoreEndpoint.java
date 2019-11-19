@@ -17,6 +17,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Metered;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 import sv.org.devfest.bookstore.entities.Book;
 import sv.org.devfest.bookstore.services.BookService;
 
@@ -33,11 +37,21 @@ public class BookStoreEndpoint {
     @Inject
     BookService bookService;
 
+    @Timed(name = "get-all-books",
+            description = "Monitor the time getAll Method takes",
+            unit = MetricUnits.MILLISECONDS,
+            absolute = true)
     @GET
     public Response getAll() {
         return Response.ok(bookService.getAll()).build();
     }
 
+    @Counted(unit = MetricUnits.NONE,
+            name = "get-book",
+            absolute = true,
+            monotonic = true,
+            displayName = "get single book",
+            description = "Monitor how many times getBook method was called")
     @GET
     @Path("{id}")
     public Response getBook(@PathParam("id") Long id) {
@@ -46,6 +60,10 @@ public class BookStoreEndpoint {
         return Response.ok(book).build();
     }
 
+    @Metered(name = "create-books",
+            unit = MetricUnits.MILLISECONDS,
+            description = "Monitor the rate events occured",
+            absolute = true)
     @POST
     public Response create(Book book) {
         bookService.create(book);
