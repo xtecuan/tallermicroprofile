@@ -1,19 +1,11 @@
 #!/bin/bash
 
-export myHost="localhost"
 
-export myPort="8080"
-
-export myContext="restapi"
-
-export myPath="books"
-
-export myUrl="http://${myHost}:${myPort}/${myContext}/${myPath}"
+export APP=$(dirname $(realpath $0))
+source ${APP}/env.sh
 
 export book1='{"title":"This is my test book","description":"this is my book description","isbn": "12xxxxxxxx", "publisher": "None Yet", "language":"English","author":"Hayri Cicek","price": "0.00","pages":"0"}'
-			 
 export book2='{"title":"This is my second test book","description":"this is my second book description","isbn": "13xxxxxxxx", "publisher": "None Yet", "language":"English","author":"Hayri Cicek","price": "0.00","pages":"0"}'
-
 export book3='{"title":"Xtecuan Book","description":"This is the book of Tadeo","isbn": "14xxxxxxxx", "publisher": "None Yet", "language":"Spanish","author":"Tadeo Rivera-Pineda","price": "0.00","pages":"0"}'
 
 export currentBook=${book1}

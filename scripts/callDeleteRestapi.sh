@@ -10,4 +10,4 @@ fi
 
 echo "Calling ${myUrl}"
 
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" -X GET ${myUrl}
+curl -X DELETE ${myUrl}
