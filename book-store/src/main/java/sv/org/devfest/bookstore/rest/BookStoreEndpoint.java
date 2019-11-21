@@ -5,6 +5,9 @@
  */
 package sv.org.devfest.bookstore.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -17,10 +20,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.eclipse.microprofile.config.Config;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.metrics.annotation.Timed;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import sv.org.devfest.bookstore.entities.Book;
 import sv.org.devfest.bookstore.services.BookService;
 
@@ -37,6 +47,39 @@ public class BookStoreEndpoint {
     @Inject
     BookService bookService;
 
+    @Inject
+    @ConfigProperty(name = "username", defaultValue = "admin")
+    private String username;
+
+    @Inject
+    Config config;
+
+    @GET
+    @Path("mp-config")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response mpConfig() {
+        Map<String, Object> configProperties = new HashMap<>();
+        configProperties.put("username", username);
+        configProperties.put("password", config.getValue("password", String.class));
+        configProperties.put("microprofile-apis", config.getValue("microprofile.apis", String[].class));
+        return Response.ok(configProperties).build();
+    }
+
+    @APIResponses(
+            value = {
+                @APIResponse(
+                        responseCode = "404",
+                        description = "We could not find anything",
+                        content = @Content(mediaType = "text/plain")
+                ),
+                @APIResponse(
+                        responseCode = "200",
+                        description = "We have a list of books",
+                        content = @Content(mediaType = "application/json", schema = @Schema(implementation = Properties.class))
+                )
+            }
+    )
+    @Operation(summary = "Outputs a list of books", description = "This method outputs a list of books")
     @Timed(name = "get-all-books",
             description = "Monitor the time getAll Method takes",
             unit = MetricUnits.MILLISECONDS,

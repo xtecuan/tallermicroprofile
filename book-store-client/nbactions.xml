@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+       
+        <action>
+            <actionName>CUSTOM-clean package tomee:run -Dtomee-plugin.http=8081</actionName>
+            <displayName>clean package tomee:run -Dtomee-plugin.http=8081</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>package</goal>
+                <goal>tomee:run</goal>
+                <goal>-Dtomee-plugin.http=8081</goal>
+            </goals>
+        </action>
+    </actions>
