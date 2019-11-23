@@ -8,6 +8,8 @@ package sv.org.devfest.bookstore.rest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import static java.util.stream.Collectors.toList;
+import java.util.stream.Stream;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -22,6 +24,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.faulttolerance.Bulkhead;
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
+import org.eclipse.microprofile.faulttolerance.Fallback;
+import org.eclipse.microprofile.faulttolerance.Retry;
+import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Metered;
@@ -84,9 +91,18 @@ public class BookStoreEndpoint {
             description = "Monitor the time getAll Method takes",
             unit = MetricUnits.MILLISECONDS,
             absolute = true)
+//    @Timeout(0)
+//    @Retry(maxRetries = 3, delay = 300)
+//    @Fallback(fallbackMethod = "getAllFallbackMethod")
+//    @Bulkhead(10)
+//    @CircuitBreaker(delay = 2000, requestVolumeThreshold = 2, failureRatio=0.65, successThreshold = 3)
     @GET
     public Response getAll() {
         return Response.ok(bookService.getAll()).build();
+    }
+
+    public Response getAllFallbackMethod() {
+        return Response.ok(Stream.of("Book One", "Book Two").collect(toList())).build();
     }
 
     @Counted(unit = MetricUnits.NONE,
