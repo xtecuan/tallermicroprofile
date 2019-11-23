@@ -28,7 +28,7 @@ public interface BookStoreService {
     @GET
     public List<BookResponse> getAll();
 
-    @GET
-    @Path("mp-config")
-    public Map<String, Object> mpConfig();
+//    @GET
+//    @Path("mp-config")
+//    public Map<String, Object> mpConfig();
 }

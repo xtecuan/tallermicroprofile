@@ -5,8 +5,6 @@
  */
 package sv.org.devfest.bookstore.rest;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
@@ -22,13 +20,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.faulttolerance.Bulkhead;
-import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
-import org.eclipse.microprofile.faulttolerance.Fallback;
-import org.eclipse.microprofile.faulttolerance.Retry;
-import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.eclipse.microprofile.metrics.annotation.Metered;
@@ -52,25 +43,7 @@ import sv.org.devfest.bookstore.services.BookService;
 public class BookStoreEndpoint {
 
     @Inject
-    BookService bookService;
-
-    @Inject
-    @ConfigProperty(name = "username", defaultValue = "admin")
-    private String username;
-
-    @Inject
-    Config config;
-
-    @GET
-    @Path("mp-config")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response mpConfig() {
-        Map<String, Object> configProperties = new HashMap<>();
-        configProperties.put("username", username);
-        configProperties.put("password", config.getValue("password", String.class));
-        configProperties.put("microprofile-apis", config.getValue("microprofile.apis", String[].class));
-        return Response.ok(configProperties).build();
-    }
+    BookService bookService;   
 
     @APIResponses(
             value = {
